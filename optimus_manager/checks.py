@@ -148,6 +148,9 @@ def _is_service_active(service_name):
     if subprocess.run(f"which s6-svstat", shell=True).returncode == 0:
         return _is_service_active_s6(service_name)
 
+    if subprocess.run(f"which dinitctl", shell=True).returncode ==0:
+        return _is_service_active_dinit(service_name)
+
     if subprocess.run(f"which systemctl", shell=True).returncode == 0:
         try:
             system_bus = dbus.SystemBus()
@@ -188,11 +191,12 @@ def _is_service_active_openrc(service_name):
         return True
     return False
 
-
 def _is_service_active_s6(service_name):
     # TODO: Check if service running
     return True
 
+def _is_service_active_dinit(service_name):
+    return True
 
 def _is_service_active_sv(service_name):
     if subprocess.run(f"sv status %s | grep 'up: '" % service_name, shell=True).returncode == 0:
